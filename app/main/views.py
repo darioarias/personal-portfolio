@@ -41,3 +41,9 @@ def placeholder(size=None):
   if size.lower() == 'large':
     return render_template("base-large.html")
   return render_template("base.html")
+
+
+@main.route('/v2/', defaults={'path': ''})
+@main.route('/v2/<path:path>')
+def redirect_(path):
+  return redirect(url_for('main.index')), 302
