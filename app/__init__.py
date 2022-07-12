@@ -32,7 +32,7 @@ def create_app(config_profile: str):
     app.register_blueprint(main_blueprint)
 
   if app.config['TESTING']:
-    print('CREATING TESTING DATABASE')
+    # print('CREATING TESTING DATABASE')
     database = SqliteDatabase(
         'file:memory?mode=memory&cache=shared', uri=False)
   else:
