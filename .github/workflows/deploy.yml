@@ -22,5 +22,4 @@ jobs:
           port: 22
           script: |
             cd ${{ secrets.PROJECT_ROOT }}
-            pwd
-            ls -al
+            ./scripts/redeploy-site.bash --pull-update --with-docker
