@@ -21,6 +21,7 @@ jobs:
           password: ${{ secrets.SSH_PWD }}
           port: 22
           script: |
+            cd ${{ secrets.PROJECT_ROOT }}
             whoami
             pwd
             ls -al
