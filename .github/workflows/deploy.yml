@@ -4,7 +4,7 @@ on:
   push:
     branhces:
       - main
-  workflow_dispatch:
+  workflow_dispatch: Run workflow
 
 jobs:
   deploy:
@@ -22,6 +22,5 @@ jobs:
           port: 22
           script: |
             cd ${{ secrets.PROJECT_ROOT }}
-            whoami
             pwd
             ls -al
