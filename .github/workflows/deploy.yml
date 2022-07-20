@@ -7,9 +7,37 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Run Tests
+    env:
+      TESTING: true
+      FLASK_ENV: testing
+      FLASK_CONFIG: testing
+      FLASK_APP: run.py
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9.0" #TODO: update python version
+
+      - name: Setup Python Virtual Environment
+        run: python -m venv venv
+
+      - name: Install Dependencies
+        run: venv/bin/pip install -r requirements/prod.txt
+
+      - name: Run Tests
+        run: ./scripts/run_test.sh
+
   deploy:
     name: "Deploy to AWS EC2 Virtual Machine"
     runs-on: ubuntu-latest
+    needs:
+      - test
     steps:
       #Skipping the set-up part, using library instead
       - name: Deploy changes to production
@@ -26,6 +54,7 @@ jobs:
   check-container:
     name: "Check Container Status"
     runs-on: ubuntu-latest
+    id: check_status
     needs:
       - deploy
     steps:
@@ -50,6 +79,8 @@ jobs:
     steps:
       - name: Notify
         uses: nobrayner/discord-webhook@v1
+        env:
+          STATUS_OUTPUT: ${{join(steps.)}}
         with:
           github-token: ${{ secrets.github_token }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
