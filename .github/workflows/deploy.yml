@@ -22,14 +22,22 @@ jobs:
           script: |
             cd ${{ secrets.PROJECT_ROOT }}
             ./scripts/redeploy-site.bash --pull-update --with-docker
+
+      - name: Check Container Status
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PWD }}
+          port: 22
+          script: |
+            docker compose ps --format json | jq "[.[] | {id: .ID, name: .Name, status: .State, exitCode: .ExitCode}]"
   notify:
     name: Discord Notification
     runs-on: ubuntu-latest
     needs:
       - deploy
-
     if: ${{ always() }}
-
     steps:
       - name: Notify
         uses: nobrayner/discord-webhook@v1
