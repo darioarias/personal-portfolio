@@ -11,3 +11,4 @@ flask.sqlite
 .vscode
 **/*lrn-test*
 **/.prettierignore
+**/pipline-cycle
