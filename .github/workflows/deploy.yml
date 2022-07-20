@@ -78,8 +78,6 @@ jobs:
     steps:
       - name: Notify
         uses: nobrayner/discord-webhook@v1
-        env:
-          STATUS_OUTPUT: ${{join(steps.)}}
         with:
           github-token: ${{ secrets.github_token }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
