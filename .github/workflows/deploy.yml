@@ -24,10 +24,12 @@ jobs:
             ./scripts/redeploy-site.bash --pull-update --with-docker
 
   check-container:
-    name: "Deploy to AWS EC2 Virtual Machine"
+    name: "Check Container Status"
     runs-on: ubuntu-latest
+    needs:
+      - deploy
     steps:
-      - name: Check Container Status
+      - name: Check the status of all docker containers
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_IP }}
@@ -35,6 +37,7 @@ jobs:
           password: ${{ secrets.SSH_PWD }}
           port: 22
           script: |
+            cd ${{ secrets.PROJECT_ROOT }}
             docker compose ps --format json | jq "[.[] | {id: .ID, name: .Name, status: .State, exitCode: .ExitCode}]"
 
   notify:
