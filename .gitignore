@@ -12,3 +12,4 @@ flask.sqlite
 **/*lrn-test*
 **/.prettierignore
 **/pipline-cycle
+**/miscellaneous
