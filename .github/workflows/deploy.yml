@@ -24,8 +24,8 @@ jobs:
         with:
           python-version: "3.9.0" #TODO: update python version
 
-      - name: Setup Python Virtual Environment
-        run: python -m venv venv
+      # - name: Setup Python Virtual Environment
+      #   run: python -m venv venv
 
       # - name: Install Dependencies
       #   run: venv/bin/pip install -r requirements/prod.txt
@@ -51,8 +51,7 @@ jobs:
         #   script: |
         #     cd ${{ secrets.PROJECT_ROOT }}
         #     ./scripts/redeploy-site.bash --pull-update --with-docker
-      - name: greet
-        run: echo here
+
   notify:
     if: github.event.pull_request.merged == true
     name: Discord Notification
