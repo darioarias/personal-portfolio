@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
-    if: ${{ always() }}
+
     steps:
       #Skipping the set-up part, using library instead
       - name: Deploy changes to production
