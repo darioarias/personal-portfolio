@@ -24,14 +24,14 @@ jobs:
         with:
           python-version: "3.9.0" #TODO: update python version
 
-      # - name: Setup Python Virtual Environment
-      #   run: python -m venv venv
+      - name: Setup Python Virtual Environment
+        run: python -m venv venv
 
-      # - name: Install Dependencies
-      #   run: venv/bin/pip install -r requirements/prod.txt
+      - name: Install Dependencies
+        run: venv/bin/pip install -r requirements/prod.txt
 
-      # - name: Run Tests
-      #   run: ./scripts/run_test.sh
+      - name: Run Tests
+        run: ./scripts/run_test.sh
 
   deploy:
     if: github.event.pull_request.merged == true
@@ -43,14 +43,14 @@ jobs:
       #Skipping the set-up part, using library instead
       - name: Deploy changes to production
         uses: appleboy/ssh-action@master
-        # with:
-        #   host: ${{ secrets.SSH_IP }}
-        #   username: ${{ secrets.SSH_USER }}
-        #   password: ${{ secrets.SSH_PWD }}
-        #   port: 22
-        #   script: |
-        #     cd ${{ secrets.PROJECT_ROOT }}
-        #     ./scripts/redeploy-site.bash --pull-update --with-docker
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PWD }}
+          port: 22
+          script: |
+            cd ${{ secrets.PROJECT_ROOT }}
+            ./scripts/redeploy-site.bash --pull-update --with-docker
 
   notify:
     if: github.event.pull_request.merged == true
