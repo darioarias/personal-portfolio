@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - deploy
-    if: ${{ always() }}
+    # if: ${{ always() }}
     steps:
       - name: Notify
         uses: nobrayner/discord-webhook@v1
