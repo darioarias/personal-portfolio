@@ -55,30 +55,30 @@ if_merged:
             cd ${{ secrets.PROJECT_ROOT }}
             ./scripts/redeploy-site.bash --pull-update --with-docker
 
-  if_merged:
-    if: github.event.pull_request.merged == true
-    notify:
-      name: Discord Notification
-      runs-on: ubuntu-latest
-      needs:
-        - deploy
-        - check-container
-      if: ${{ always() }}
-      steps:
-        - name: Notify
-          uses: nobrayner/discord-webhook@v1
-          with:
-            github-token: ${{ secrets.github_token }}
-            discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
+if_merged:
+  if: github.event.pull_request.merged == true
+  notify:
+    name: Discord Notification
+    runs-on: ubuntu-latest
+    needs:
+      - deploy
+      - check-container
+    if: ${{ always() }}
+    steps:
+      - name: Notify
+        uses: nobrayner/discord-webhook@v1
+        with:
+          github-token: ${{ secrets.github_token }}
+          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
-        - name: Check the status of all docker containers
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.SSH_IP }}
-            username: ${{ secrets.SSH_USER }}
-            password: ${{ secrets.SSH_PWD }}
-            port: 22
-            script: |
-              cd ${{ secrets.PROJECT_ROOT }}
-              STATUS=$(docker compose ps --format json | jq "[.[] | {id: .ID, name: .Name, status: .State, exitCode: .ExitCode}]")
-              curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=$STATUS"
+      - name: Check the status of all docker containers
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PWD }}
+          port: 22
+          script: |
+            cd ${{ secrets.PROJECT_ROOT }}
+            STATUS=$(docker compose ps --format json | jq "[.[] | {id: .ID, name: .Name, status: .State, exitCode: .ExitCode}]")
+            curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=$STATUS"
