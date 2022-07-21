@@ -19,6 +19,15 @@ jobs:
       - name: Greet
         run: echo "Hello World"
 
+  greet:
+    runs-on: ubuntu-latest
+      name: Run Tests
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v2
+        - name: Greet
+          run: echo "Hello Worldx"
+
   # test:
   #   runs-on: ubuntu-latest
   #   name: Run Tests
