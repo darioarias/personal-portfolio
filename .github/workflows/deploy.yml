@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
-    id: deploy
+    id: deploy_j
     steps:
       #Skipping the set-up part, using library instead
       - name: Deploy changes to production
@@ -82,8 +82,7 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
-
-    if: ${{ job.steps.deploy.status == success() }}
+      # if: ${{ job.steps.deploy.status == success() }}
       - name: Check the status of all docker containers
         uses: appleboy/ssh-action@master
         with:
@@ -95,4 +94,3 @@ jobs:
             cd ${{ secrets.PROJECT_ROOT }}
             STATUS=$(docker compose ps --format json | jq "[.[] | {id: .ID, name: .Name, status: .State, exitCode: .ExitCode}]")
             curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=$STATUS"
-    
