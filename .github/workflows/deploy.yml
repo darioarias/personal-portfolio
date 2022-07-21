@@ -51,7 +51,7 @@ jobs:
         #   script: |
         #     cd ${{ secrets.PROJECT_ROOT }}
         #     ./scripts/redeploy-site.bash --pull-update --with-docker
-        name: greet
+      - name: greet
         run: echo here
   notify:
     # if: github.event.pull_request.merged == true
