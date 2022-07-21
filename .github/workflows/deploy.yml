@@ -9,76 +9,85 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  if_merged:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     name: Run Tests
-    env:
-      TESTING: true
-      FLASK_ENV: testing
-      FLASK_CONFIG: testing
-      FLASK_APP: run.py
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Greet
+        run: echo "Hello World"
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9.0" #TODO: update python version
+  # test:
+  #   runs-on: ubuntu-latest
+  #   name: Run Tests
+  #   env:
+  #     TESTING: true
+  #     FLASK_ENV: testing
+  #     FLASK_CONFIG: testing
+  #     FLASK_APP: run.py
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v2
 
-      - name: Setup Python Virtual Environment
-        run: python -m venv venv
+  #     - name: Setup Python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: "3.9.0" #TODO: update python version
 
-      - name: Install Dependencies
-        run: venv/bin/pip install -r requirements/prod.txt
+  #     - name: Setup Python Virtual Environment
+  #       run: python -m venv venv
 
-      - name: Run Tests
-        run: ./scripts/run_test.sh
+  #     - name: Install Dependencies
+  #       run: venv/bin/pip install -r requirements/prod.txt
 
-if_merged:
-  if: github.event.pull_request.merged == true
-  deploy:
-    name: "Deploy to AWS EC2 Virtual Machine"
-    runs-on: ubuntu-latest
-    needs:
-      - test
-    steps:
-      #Skipping the set-up part, using library instead
-      - name: Deploy changes to production
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_IP }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PWD }}
-          port: 22
-          script: |
-            cd ${{ secrets.PROJECT_ROOT }}
-            ./scripts/redeploy-site.bash --pull-update --with-docker
+  #     - name: Run Tests
+  #       run: ./scripts/run_test.sh
+# if_merged:
+#   if: github.event.pull_request.merged == true
+#   deploy:
+#     name: "Deploy to AWS EC2 Virtual Machine"
+#     runs-on: ubuntu-latest
+#     needs:
+#       - test
+#     steps:
+#       #Skipping the set-up part, using library instead
+#       - name: Deploy changes to production
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.SSH_IP }}
+#           username: ${{ secrets.SSH_USER }}
+#           password: ${{ secrets.SSH_PWD }}
+#           port: 22
+#           script: |
+#             cd ${{ secrets.PROJECT_ROOT }}
+#             ./scripts/redeploy-site.bash --pull-update --with-docker
 
-if_merged:
-  if: github.event.pull_request.merged == true
-  notify:
-    name: Discord Notification
-    runs-on: ubuntu-latest
-    needs:
-      - deploy
-      - check-container
-    if: ${{ always() }}
-    steps:
-      - name: Notify
-        uses: nobrayner/discord-webhook@v1
-        with:
-          github-token: ${{ secrets.github_token }}
-          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
+# if_merged:
+#   if: github.event.pull_request.merged == true
+#   notify:
+#     name: Discord Notification
+#     runs-on: ubuntu-latest
+#     needs:
+#       - deploy
+#       - check-container
+#     if: ${{ always() }}
+#     steps:
+#       - name: Notify
+#         uses: nobrayner/discord-webhook@v1
+#         with:
+#           github-token: ${{ secrets.github_token }}
+#           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
-      - name: Check the status of all docker containers
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_IP }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PWD }}
-          port: 22
-          script: |
-            cd ${{ secrets.PROJECT_ROOT }}
-            STATUS=$(docker compose ps --format json | jq "[.[] | {id: .ID, name: .Name, status: .State, exitCode: .ExitCode}]")
-            curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=$STATUS"
+#       - name: Check the status of all docker containers
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.SSH_IP }}
+#           username: ${{ secrets.SSH_USER }}
+#           password: ${{ secrets.SSH_PWD }}
+#           port: 22
+#           script: |
+#             cd ${{ secrets.PROJECT_ROOT }}
+#             STATUS=$(docker compose ps --format json | jq "[.[] | {id: .ID, name: .Name, status: .State, exitCode: .ExitCode}]")
+#             curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=$STATUS"
