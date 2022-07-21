@@ -26,9 +26,6 @@ jobs:
 
       - name: Setup Python Virtual Environment
         run: python -m venv venv
-      
-      - name: Greet
-        run: echo "all tests passed"
 
       # - name: Install Dependencies
       #   run: venv/bin/pip install -r requirements/prod.txt
