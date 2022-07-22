@@ -1,0 +1,13 @@
+name: Pull Request - Close
+
+on:
+  pull_request
+    types: [closed, opened]
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    name: greet the cli
+    steps:
+      - name: running on cli
+        run: echo Hello
