@@ -1,8 +1,9 @@
 name: Pull Request - Close
 
 on:
-  pull_request
+  pull_request:
     types: [closed, opened]
+  workflow_dispatch:
 
 jobs:
   greet:
