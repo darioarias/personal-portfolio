@@ -1,9 +1,11 @@
-name: Deploy
+name: Test And Deploy
 
 on:
   # push:
   #   branhces:
   #     - main
+  pull_request:
+    types: [closed]
   workflow_dispatch:
 
 jobs:
@@ -34,7 +36,6 @@ jobs:
         run: ./scripts/run_test.sh
 
   deploy:
-    if: github.event.pull_request.merged == true
     name: "Deploy to AWS EC2 Virtual Machine"
     runs-on: ubuntu-latest
     needs:
@@ -53,7 +54,6 @@ jobs:
             ./scripts/redeploy-site.bash --pull-update --with-docker
 
   notify:
-    if: github.event.pull_request.merged == true
     name: Discord Notification
     runs-on: ubuntu-latest
     needs:
