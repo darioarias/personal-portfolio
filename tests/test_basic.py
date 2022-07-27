@@ -1,26 +1,24 @@
 import unittest
-from urllib import response
+from app.models import TimelinePost, database
 from flask import current_app
-from app import create_app, db
+from app import create_app
 import os
 
 
 class BasicTests(unittest.TestCase):
   """ This unit test is mean to test basic parts of the app, checking that all endpoints respond with no error code """
-
-  @classmethod
-  def setUpClass(cls):
-    os.system('export FLASK_CONFIG=testing; flask deploy')
-
   @classmethod
   def tearDownClass(cls):
-    os.system('rm -f file:memory\?mode=memory\&cache=shared')
+    os.system('rm -f test.db')
 
   def setUp(self):
     self.app = create_app('testing')
     self.app_context = self.app.app_context()
     self.app_context.push()
     self.client = self.app.test_client()
+
+    database.connect(reuse_if_open=True)
+    database.create_tables([TimelinePost], safe=True)
 
   def tearDown(self):
     self.app_context.pop()

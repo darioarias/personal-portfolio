@@ -1,6 +1,3 @@
-# test_db.py
-
-from tkinter.tix import Tree
 import unittest
 from peewee import *
 

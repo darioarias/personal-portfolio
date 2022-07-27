@@ -1,27 +1,30 @@
 # tests/test_app.py
 
 from app import create_app
+from app.models import TimelinePost, database
+from playhouse.shortcuts import model_to_dict
 import unittest
 import os
 
 
 class AppTestCase(unittest.TestCase):
   @classmethod
-  def setUpClass(cls):
-    os.system('export FLASK_CONFIG=testing; flask deploy')
-
-  @classmethod
   def tearDownClass(cls):
-    os.system('rm -f file:memory\?mode=memory\&cache=shared')
+    os.system('rm -f test.db')
 
   def setUp(self):
     self.app = create_app('testing')
+
     self.app_context = self.app.app_context()
     self.app_context.push()
     self.client = self.app.test_client()
 
+    database.connect(reuse_if_open=True)
+    database.create_tables([TimelinePost], safe=True)
+
   def tearDown(self):
     self.app_context.pop()
+    database.close()
 
   def test_home(self):
     response = self.client.get("/")
