@@ -1,5 +1,4 @@
 from flask import jsonify
-from pymysql import Time
 from . import api_v1
 from app.models import TimelinePost
 from flask import request
@@ -17,6 +16,7 @@ def post_time_line_post():
     post.save()
     return jsonify(post.to_json())
   except Exception as err:
+    print('err', err)
     return jsonify({"message": "unable to create post"}), 500
 
 
