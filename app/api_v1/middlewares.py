@@ -1,16 +1,17 @@
 from . import api_v1
-from app import db
-
+from flask import current_app as app
 
 
 @api_v1.before_request
 def before_request():
-  # print('Openning db connection')
-  db.connect()
+  with app.app_context():
+    from app.models import database
+    database.connect(reuse_if_open=True)
 
 
 @api_v1.after_request
 def after_request(response):
-  # print('Closing db connection')
-  db.close()
-  return response;
+  with app.app_context():
+    from app.models import database
+    database.close()
+  return response
