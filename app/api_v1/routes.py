@@ -10,8 +10,9 @@ def post_time_line_post():
   post = TimelinePost.create(**request.form)
   
   try:
-    post.save()
-    return jsonify(post.to_json());
+    if post != None:
+      post.save()
+      return jsonify(post.to_json());
   except:
     return jsonify({"message": "unable to create post"}), 500
 

@@ -25,6 +25,17 @@ class AppTestCase(unittest.TestCase):
         # TODO Add more tests relating to the /api/timeline post GET and POST apis
         # TODO Add more tests relating to the timeline page
 
+        form = {"name": "John", "email": "wassupdario@gmail.com", "content": "Wassup Dario."}
+        response = self.client.post('/api/timeline_post', data=form)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.is_json)
+        self.assertEqual('John', response.json['name'])
+
+        timelinePage = self.client.get('/timeline/')
+        self.assertEqual(timelinePage.status_code, 200)
+        self.assertTrue(response.is_json)
+
     def test_malformed_timeline_post(self):
         # POST request missing name
         response = self.client.post("/api/timeline_post", data= {"email": " john@example.com ", "content": "Hello world, I'm John!"})
